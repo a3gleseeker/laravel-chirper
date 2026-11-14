@@ -9,3 +9,11 @@ Route::get('/home', function () {
 
 
 Route::get('/', [PostController::class, 'index']);
+
+Route::post('/posts', [PostController::class, 'store']);
+Route::get('/posts/{post}/edit',[PostController::class, 'edit']);
+Route::put('/posts/{post}', [PostController::class, 'update']);
+Route::delete('/posts/{post}',[PostController::class, 'destroy']);
+
+Route::resource('posts', PostController::class)
+    ->only(['store', 'edit', 'update', 'destroy']);

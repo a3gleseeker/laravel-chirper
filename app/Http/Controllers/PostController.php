@@ -34,7 +34,24 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request -> validate([
+            'title' => "required|string|max:64",
+            'desc' => "required|string|max:256",
+        ], 
+            [
+                'message.required' => "Please write something",
+                'message.max' => 'post lenght can be only below 257',
+            ]);
+
+        \App\Models\Post::create([
+            'title'  => $validated['title'],
+            'description' => $validated['desc'],
+            'user_id' => 1,
+        ]);
+
+        return redirect('/')->with('success', 'post created!');
+
+
     }
 
     /**
@@ -48,24 +65,36 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Post $post)
     {
-        //
+        return view('edit', compact('post'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function update(Request $request, Post $post)
+    {   
+
+        #$this->authorize('update', $post);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:64',
+            'description' => 'required|string|max:256',
+        ]);
+
+        $post->update($validated);
+
+        return redirect('/')->with('success', 'Post Updated!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
-        //
+        $post->delete();
+
+        return redirect('/')->with('success', 'Post Deleted');
     }
 }
